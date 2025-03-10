@@ -7,6 +7,12 @@
 /**
  * @type {import('gatsby').GatsbySSR['onRenderBody']}
  */
-exports.onRenderBody = ({ setHtmlAttributes }) => {
+export const onRenderBody = ({ setHtmlAttributes, setBodyAttributes }) => {
   setHtmlAttributes({ lang: `en` })
+  setBodyAttributes({ className: `dark-theme` })
+}
+
+// Keep the same wrap page element function as gatsby-browser.js for consistency
+export const wrapPageElement = ({ element }) => {
+  return element;
 }

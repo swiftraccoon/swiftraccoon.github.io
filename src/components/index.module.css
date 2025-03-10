@@ -18,28 +18,33 @@
 }
 
 .listItem::marker {
-  color: #e95800;
+  color: var(--color-primary);
 }
 
 .listItem:nth-child(2)::marker {
-  color: #159bf3;
+  color: var(--color-secondary);
 }
 
 .listItem:nth-child(3)::marker {
-  color: #8eb814;
+  color: var(--color-accent);
 }
 
 .listItem:nth-child(4)::marker {
-  color: #663399;
+  color: var(--color-primary-dark);
 }
 
 .listItemLink {
   color: var(--color-primary);
   font-weight: bold;
+  transition: color 0.2s ease;
+}
+
+.listItemLink:hover {
+  color: var(--color-accent);
 }
 
 .listItemDescription {
-  color: var(--color-text);
+  color: var(--color-text-secondary);
   margin-bottom: 0;
   margin-top: var(--space-1);
 }

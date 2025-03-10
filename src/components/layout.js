@@ -30,6 +30,8 @@ const Layout = ({ children }) => {
           margin: `0 auto`,
           maxWidth: `var(--size-content)`,
           padding: `var(--size-gutter)`,
+          backgroundColor: `var(--color-background)`,
+          minHeight: `calc(100vh - 150px)`,
         }}
       >
         <main>{children}</main>
@@ -37,11 +39,15 @@ const Layout = ({ children }) => {
           style={{
             marginTop: `var(--space-5)`,
             fontSize: `var(--font-sm)`,
+            color: `var(--color-text-secondary)`,
+            textAlign: `center`,
+            padding: `var(--space-4) 0`,
+            borderTop: `1px solid rgba(255, 255, 255, 0.05)`,
           }}
         >
           © {new Date().getFullYear()} &middot; Built with
           {` `}
-          <a href="https://www.gatsbyjs.com">Gatsby</a>
+          <a href="https://www.gatsbyjs.com" style={{ color: `var(--color-primary)` }}>Gatsby</a>
         </footer>
       </div>
     </>

@@ -1,122 +1,163 @@
 import * as React from "react"
-import { Link } from "gatsby"
-import { StaticImage } from "gatsby-plugin-image"
+import { Link, graphql } from "gatsby"
 
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 import * as styles from "../components/index.module.css"
 
-const links = [
-  {
-    text: "Tutorial",
-    url: "https://www.gatsbyjs.com/docs/tutorial",
-    description:
-      "A great place to get started if you're new to web development. Designed to guide you through setting up your first Gatsby site.",
-  },
-  {
-    text: "Examples",
-    url: "https://github.com/gatsbyjs/gatsby/tree/master/examples",
-    description:
-      "A collection of websites ranging from very basic to complex/complete that illustrate how to accomplish specific tasks within your Gatsby sites.",
-  },
-  {
-    text: "Plugin Library",
-    url: "https://www.gatsbyjs.com/plugins",
-    description:
-      "Learn how to add functionality and customize your Gatsby site or app with thousands of plugins built by our amazing developer community.",
-  },
-  {
-    text: "Build and Host",
-    url: "https://www.gatsbyjs.com/cloud",
-    description:
-      "Now you’re ready to show the world! Give your Gatsby site superpowers: Build and host on Gatsby Cloud. Get started for free!",
-  },
-]
-
-const samplePageLinks = [
-  {
-    text: "Page 2",
-    url: "page-2",
-    badge: false,
-    description:
-      "A simple example of linking to another page within a Gatsby site",
-  },
-  { text: "TypeScript", url: "using-typescript" },
-  { text: "Server Side Rendering", url: "using-ssr" },
-  { text: "Deferred Static Generation", url: "using-dsg" },
-]
-
-const moreLinks = [
-  { text: "Join us on Discord", url: "https://gatsby.dev/discord" },
-  {
-    text: "Documentation",
-    url: "https://gatsbyjs.com/docs/",
-  },
-  {
-    text: "Starters",
-    url: "https://gatsbyjs.com/starters/",
-  },
-  {
-    text: "Showcase",
-    url: "https://gatsbyjs.com/showcase/",
-  },
-  {
-    text: "Contributing",
-    url: "https://www.gatsbyjs.com/contributing/",
-  },
-  { text: "Issues", url: "https://github.com/gatsbyjs/gatsby/issues" },
-]
-
-const utmParameters = `?utm_source=starter&utm_medium=start-page&utm_campaign=default-starter`
-
-const IndexPage = () => (
-  <Layout>
-    <div className={styles.textCenter}>
-      <StaticImage
-        src="../images/example.png"
-        loading="eager"
-        width={64}
-        quality={95}
-        formats={["auto", "webp", "avif"]}
-        alt=""
-        style={{ marginBottom: `var(--space-3)` }}
-      />
-      <h1>
-        Welcome to <b>Gatsby!</b>
-      </h1>
-      <p className={styles.intro}>
-        <b>Example pages:</b>{" "}
-        {samplePageLinks.map((link, i) => (
-          <React.Fragment key={link.url}>
-            <Link to={link.url}>{link.text}</Link>
-            {i !== samplePageLinks.length - 1 && <> · </>}
-          </React.Fragment>
-        ))}
-        <br />
-        Edit <code>src/pages/index.js</code> to update this page.
+const BlogPostCard = ({ post }) => (
+  <div style={{
+    padding: "var(--space-4)",
+    marginBottom: "var(--space-5)",
+    borderRadius: "var(--border-radius)",
+    backgroundColor: "var(--color-surface)",
+    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+    border: "1px solid rgba(255, 255, 255, 0.05)",
+    position: "relative",
+    overflow: "hidden"
+  }}>
+    {/* Blue accent line at the top */}
+    <div style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      height: "3px",
+      background: "linear-gradient(90deg, var(--color-blue) 0%, var(--color-secondary) 100%)"
+    }} />
+    
+    <Link 
+      to={`/blog/${post.frontmatter.slug}`}
+      style={{ 
+        textDecoration: "none",
+        color: "inherit",
+        display: "block",
+        paddingTop: "var(--space-2)"
+      }}
+    >
+      <h2 style={{ 
+        color: "var(--color-primary)",
+        marginBottom: "var(--space-2)"
+      }}>
+        {post.frontmatter.title}
+      </h2>
+      
+      <p style={{ 
+        fontSize: "var(--font-sm)",
+        color: "var(--color-blue-light)",
+        marginBottom: "var(--space-3)"
+      }}>
+        {post.frontmatter.date}
       </p>
-    </div>
-    <ul className={styles.list}>
-      {links.map(link => (
-        <li key={link.url} className={styles.listItem}>
-          <a
-            className={styles.listItemLink}
-            href={`${link.url}${utmParameters}`}
-          >
-            {link.text} ↗
-          </a>
-          <p className={styles.listItemDescription}>{link.description}</p>
-        </li>
-      ))}
-    </ul>
-    {moreLinks.map((link, i) => (
-      <React.Fragment key={link.url}>
-        <a href={`${link.url}${utmParameters}`}>{link.text}</a>
-        {i !== moreLinks.length - 1 && <> · </>}
-      </React.Fragment>
-    ))}
-  </Layout>
-)
+      
+      <p style={{ marginBottom: 0 }}>
+        {post.frontmatter.description || post.excerpt}
+      </p>
+      
+      <div style={{
+        marginTop: "var(--space-3)",
+        fontSize: "var(--font-sm)",
+        color: "var(--color-blue)",
+        fontWeight: "500",
+        display: "inline-flex",
+        alignItems: "center"
+      }}>
+        Read more
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: "4px" }}>
+          <path d="M5 12h14"></path>
+          <path d="M12 5l7 7-7 7"></path>
+        </svg>
+      </div>
+    </Link>
+  </div>
+);
+
+const IndexPage = ({ data }) => {
+  const posts = data.allMarkdownRemark.nodes;
+
+  return (
+    <Layout>
+      <div>
+        <h1 style={{ marginBottom: "var(--space-5)" }}>
+          <span style={{ 
+            background: "linear-gradient(90deg, var(--color-blue) 0%, #FFD700 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+            color: "transparent",
+            display: "inline"
+          }}>
+            Ramblin' Swift
+          </span>{" "}
+          <span style={{ color: "var(--color-primary)" }}>Notes</span>{" "}
+          <span style={{ 
+            background: "linear-gradient(90deg, #FFD700 0%, var(--color-blue) 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+            color: "transparent",
+            display: "inline"
+          }}>
+            of Raccoon
+          </span>
+        </h1>
+        
+        <p className={styles.intro} style={{
+          position: "relative",
+          paddingLeft: "var(--space-4)",
+          borderLeft: "3px solid var(--color-blue)"
+        }}>
+          This is my personal blog where I share my thoughts on various topics. <br />
+          Feel free to explore the posts below.
+        </p>
+        
+        <h2 style={{ 
+          marginTop: "var(--space-5)",
+          marginBottom: "var(--space-4)",
+          display: "flex",
+          alignItems: "center"
+        }}>
+          <span 
+            style={{ 
+              display: "inline-block", 
+              width: "8px", 
+              height: "30px", 
+              background: "linear-gradient(180deg, var(--color-blue) 0%, var(--color-primary) 100%)",
+              marginRight: "var(--space-3)",
+              borderRadius: "4px"
+            }} 
+          />
+          Recent Posts
+        </h2>
+        
+        {posts.length > 0 ? (
+          posts.map(post => (
+            <BlogPostCard key={post.id} post={post} />
+          ))
+        ) : (
+          <p>No blog posts found. Start writing!</p>
+        )}
+      </div>
+    </Layout>
+  );
+};
+
+export const query = graphql`
+  query {
+    allMarkdownRemark(sort: { frontmatter: { date: DESC } }) {
+      nodes {
+        id
+        excerpt(pruneLength: 160)
+        frontmatter {
+          title
+          date(formatString: "MMMM DD, YYYY")
+          slug
+          description
+        }
+      }
+    }
+  }
+`;
 
 /**
  * Head export to define metadata for the page
